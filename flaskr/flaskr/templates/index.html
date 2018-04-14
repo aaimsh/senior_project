@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>مولّد النص العربي</title>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	 crossorigin="anonymous">
+	<link rel="stylesheet" href="../static/index.css" type="text/css">
+
+</head>
+
+<body>
+	<header class="header">
+		<nav>
+			<ul>
+				<li>
+					<a id="current">الكاتب</a>
+					<br>
+					<a id="rest" href="about">نبذة عن المشروع</a>
+					<br>
+					<a id="rest" href="team">فريق العمل</a>
+				</li>
+			</ul>
+		</nav>
+		<h1 id="shtr1">وَمَـا مِنْ كَاتِــبٍ إلَّا سَيَفْــنَى</h1>
+		<h1 id="shtr2">وَيَبْقَى الدَّهْرُ مَــا كَتَـــبَتْ يَدَاهُ</h1>
+	</header>
+	<div id="oktop">
+	</div>
+	<div class="buttons">
+		<button id="write">اكتب</button>
+		<button id="">اكتب</button>
+		<button id="">اكتب</button>
+	</div>
+
+</body>
+<script src="../static/jquery-3.3.1.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$("#write").on('click', function () {
+			callOktop();
+		});
+		function callOktop() {
+			$.ajax({
+				type: "GET",
+				url: "/oktop/",
+				dataType: "html",
+				success: function (result) {
+					$("#oktop").html(result)
+				}
+
+			})
+		}
+	})
+
+</script>
+
+</html>
