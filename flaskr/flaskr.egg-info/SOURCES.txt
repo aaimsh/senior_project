@@ -1,5 +1,6 @@
 flaskr/__init__.py
 flaskr/flaskr.py
+flaskr/text_generator.py
 flaskr.egg-info/PKG-INFO
 flaskr.egg-info/SOURCES.txt
 flaskr.egg-info/dependency_links.txt
