@@ -56,7 +56,8 @@ class DocumentProcessor:
         self.vec_num = vec_num
         sentences = []
         sentence = ['START']
-        special = []
+        special = ['!','@','#','$','%','^','&','*','(',')','-','+','=','|','/','\\','{','}',
+        ';',':','`','~','"',"'",',','.']
         for document in self.document_path:
             try:
                 file = open(document, encoding=self.encode)
