@@ -7,11 +7,15 @@ body{
     background-repeat: no-repeat;
     background-attachment: fixed;
 	background-size: 100% 100%;
+	width: 100%;
+	height: 100%;
 }
 .header{
 	margin:0;
 	padding:0;
 	background-color: rgba(240,234,201,0.6);
+	border: solid 1px rgba(240,234,201,0.6);
+	box-shadow: 0px 10px 10px rgba(240,234,201,0.6);
 	
 }
 .header h1{
@@ -19,7 +23,7 @@ body{
 	margin:0;
 }
 .header #shtr1{
-	margin-top:5px;
+	margin-top:15px;
 	color:#a19d87;
 	font-family: 'Amiri', serif;
 	text-align:center;
@@ -32,14 +36,15 @@ body{
 nav{
 	float:right;
 
-	margin-right:2%;
 }
 a{
 	color:#a19d87;
 	text-decoration: none;
+	font-family: "Times New Roman";
 }
 #rest:hover{
 	color:#d0c7aa;
+	text-decoration: none;
 }
 ul{
 	font-size:20px;
@@ -52,7 +57,7 @@ li{
 	color:#a19d87;
 	list-style: none;
 	margin: 15px 0;
-	font-weight:bold;
+	
 }
 .header #shtr2{
 	margin-top:5px;
@@ -62,18 +67,23 @@ li{
 	font-size:35px;
 	margin-right:15%;
 }
-#textarea{
-	margin-top:3%;
-	margin-left: 23%;
+.text-field{
+	margin:auto;
+	margin-top: 2%;
+	align-items: center
+	opacity:60%;
+}
+.buttons{
+	text-align: center;
+	margin:0px;	
+}
+.buttons #numOfWords{
+	margin-bottom:3px;
 }
 .buttons #write{
 	background-color: #bdb599;
-	margin-left: 70%;
 	font-family: "Times New Roman";
-	margin-top: 10px;
+	margin-right:5%;
+	margin-left:5%;
 	font-size:30px;
-
-}
-.p #oktop {
-	text-align: center;
 }

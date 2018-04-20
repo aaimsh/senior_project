@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 from .text_generator import Writer
 
 
@@ -27,10 +27,16 @@ def team():
 def about():
     return render_template('about.html')
 
-@app.route('/oktop/')
+@app.route('/oktop/', methods=['POST', ])
 def oktop():
-    result = writer.write(0, number_of_word=400)
-    return render_template("result.html", result=result)
+    if request.form['words'] != '':
+        init = request.form['words']
+        if int(request.form['num']) > 0 :
+            num = int(request.form['num'])
+            result = writer.write(1, words=init.split(), number_of_word=num)
+    else:
+        result = writer.write(0, number_of_word=400)
+    return render_template('result.html', result=result)
 
 if __name__ == '__main__':
     app.run()

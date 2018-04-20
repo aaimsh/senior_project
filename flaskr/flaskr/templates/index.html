@@ -29,12 +29,13 @@
 		<h1 id="shtr1">وَمَـا مِنْ كَاتِــبٍ إلَّا سَيَفْــنَى</h1>
 		<h1 id="shtr2">وَيَبْقَى الدَّهْرُ مَــا كَتَـــبَتْ يَدَاهُ</h1>
 	</header>
-	<div id="oktop">
+	<div  class="text-field">
+		<textarea id="oktob" rows="15" cols="100"></textarea>
 	</div>
 	<div class="buttons">
+		<textarea id="noOfWords"rows="1" cols="5"></textarea>
+		<label id="numOfWords">عدد الكلمات</label>
 		<button id="write">اكتب</button>
-		<button id="">اكتب</button>
-		<button id="">اكتب</button>
 	</div>
 
 </body>
@@ -42,15 +43,19 @@
 <script>
 	$(document).ready(function () {
 		$("#write").on('click', function () {
-			callOktop();
+			var words = $("#oktob").val()
+			var num = $("#noOfWords").val()
+			console.log(words + num)
+			callOktop(words, num);
 		});
-		function callOktop() {
+		function callOktop(words, num) {
 			$.ajax({
-				type: "GET",
+				type: "POST",
+				data:{'words':words, 'num':num} ,
 				url: "/oktop/",
 				dataType: "html",
 				success: function (result) {
-					$("#oktop").html(result)
+					$("#oktob").val(result.slice(1,-1))
 				}
 
 			})
@@ -60,3 +65,4 @@
 </script>
 
 </html>
+
