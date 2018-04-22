@@ -132,7 +132,7 @@ class DocumentProcessor:
                 w = self.word_to_vec[d]
                 corpus.append(w)
             except:
-                continue
+                corpus.append(self.word_to_vec['START'])
         return corpus
     
     def get_corpus_as_index(self, data=None):
@@ -151,7 +151,7 @@ class DocumentProcessor:
                 w = self.word_to_int[d]
                 corpus.append(w)
             except:
-                continue
+                corpus.append(0)
         return corpus
     
     def get_corpus_as_oneHotVec(self, data=None):
@@ -166,7 +166,11 @@ class DocumentProcessor:
             data = self.corpus
         corpus = []
         for d in data:
-            w = one_hot_vec(self.word_to_int[d], self.size)
+            try:
+                temp = self.word_to_int[d]
+            except:
+                temp = 0
+            w = one_hot_vec(temp, self.size)
             corpus.append(w)
         return corpus
 
