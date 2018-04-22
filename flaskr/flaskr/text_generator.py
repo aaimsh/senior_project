@@ -83,7 +83,7 @@ class DocumentProcessor:
                                 sentences.append(sentence)
                                 sentence = ['START']
                             else:
-                                w = harakat.strip_tashkeel(w)
+                                w = flaskr.harakat.strip_tashkeel(w)
                                 sentence.append(w) 
                 else:
                     for w in words:
