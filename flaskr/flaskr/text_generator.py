@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding=utf-8 -*-
+
 import nltk
 import gensim
 import logging
@@ -6,8 +9,11 @@ import pickle
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
+from keras.layers import GRU
 from keras.layers import Dropout
 from keras.models import load_model
+import harakat
+
 import random
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -77,6 +83,7 @@ class DocumentProcessor:
                                 sentences.append(sentence)
                                 sentence = ['START']
                             else:
+                                w = harakat.strip_tashkeel(w)
                                 sentence.append(w) 
                 else:
                     for w in words:
@@ -100,8 +107,8 @@ class DocumentProcessor:
         for i in sentences:
             for j in i:
                 try:
-                    self.corpus.append(j)
                     self.word_to_vec[j] = self.nlp_model[j]
+                    self.corpus.append(j)
                 except:
                     continue
         for w in self.word_to_vec:
@@ -125,7 +132,7 @@ class DocumentProcessor:
                 w = self.word_to_vec[d]
                 corpus.append(w)
             except:
-                continue
+                corpus.append(self.word_to_vec['START'])
         return corpus
     
     def get_corpus_as_index(self, data=None):
@@ -144,7 +151,7 @@ class DocumentProcessor:
                 w = self.word_to_int[d]
                 corpus.append(w)
             except:
-                continue
+                corpus.append(0)
         return corpus
     
     def get_corpus_as_oneHotVec(self, data=None):
@@ -159,7 +166,11 @@ class DocumentProcessor:
             data = self.corpus
         corpus = []
         for d in data:
-            w = one_hot_vec(self.word_to_int[d], self.size)
+            try:
+                temp = self.word_to_int[d]
+            except:
+                temp = 0
+            w = one_hot_vec(temp, self.size)
             corpus.append(w)
         return corpus
 
@@ -254,19 +265,19 @@ class WordGenerator:
     for natural language and train it to generate words
     '''
 
-    def __init__(self, x_shape=(1,1), y_shape=1, lstm_unit=100, normal_unit=100, normal_layer_n=1):
+    def __init__(self, x_shape=(1,1), y_shape=1, rnn_unit=100, normal_unit=100, normal_layer_n=1):
         '''
         the parameter of init are:
         x_shape:- the shape of the input training data, type:--> tupe(int,int)
         y_shape:- the shape of the target training data, type:--> int
-        lstm_unit:- the number of neurons in LSTM layer, type:--> int
+        rnn_unit:- the number of neurons in rnn layer, type:--> int
         normal_unit:- the number of neurons in Dense layer, type:--> int
         normal_layer_n: the number of Dense layer, type:--> int
         '''
 
         #initialize the RNN model(generator)
         self.generator = Sequential()
-        self.generator.add(LSTM(units = lstm_unit, input_shape = x_shape, return_sequences=True, name='LSTM'))
+        self.generator.add(GRU(units = rnn_unit, input_shape = x_shape, return_sequences=True, name='LSTM'))
         self.generator.add(Dropout(0.1))
 
         for i in range(normal_layer_n):
