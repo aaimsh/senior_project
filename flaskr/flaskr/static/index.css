@@ -70,7 +70,7 @@ li{
 .text-field{
 	margin:auto;
 	margin-top: 2%;
-	align-items: center
+	text-align: center;
 	opacity:60%;
 }
 .buttons{
