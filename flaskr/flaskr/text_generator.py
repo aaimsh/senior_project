@@ -527,7 +527,10 @@ def get_prediction(forward_gen, backward_gen, sentence):
     backward_gen is a backward generator of class writer
     '''
     s = sentence
-    index = s.index('__')
+    try:
+        index = s.index('__')
+    except ValueError:
+        return 'حدث خطأ: ليس هنالك أي كلمة مفقودة'
     f_set = []
     b_set = []
     result = ''
