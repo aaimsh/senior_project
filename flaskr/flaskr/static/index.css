@@ -68,14 +68,18 @@ li{
 	margin-right:15%;
 }
 .text-field{
-	margin:auto;
-	margin-top: 2%;
-	text-align: center;
-	opacity:60%;
+	margin-top:2%;
+}
+.text-field #oktob{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+	text-align:right;
+	resize: none;
 }
 .buttons{
 	text-align: center;
-	margin:0px;	
+	margin-top:3px;
 }
 .buttons #numOfWords{
 	margin-bottom:3px;
@@ -83,7 +87,30 @@ li{
 .buttons #write{
 	background-color: #bdb599;
 	font-family: "Times New Roman";
-	margin-right:5%;
-	margin-left:5%;
+	margin-left:5px;
 	font-size:30px;
+}
+.buttons #noOfWords{
+	resize: none;
+}
+.buttons #clear{
+	background-color: #bdb599;
+	font-family: "Times New Roman";
+	margin-left:5px;
+	font-size:30px;
+}
+.buttons #complete{
+	background-color: #bdb599;
+	font-family: "Times New Roman";
+	margin-left:5px;
+	font-size:30px;
+}
+.forma{
+	display: inline;	
+}
+.forma #space{
+
+}
+.forma #extb{
+
 }
