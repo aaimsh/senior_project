@@ -35,9 +35,16 @@
 	<div class="buttons">
 		<textarea id="noOfWords"rows="1" cols="5"></textarea>
 		<label id="numOfWords">عدد الكلمات</label>
+		<button id="clear">امسح</button>
 		<button id="write">اكتب</button>
+		<button id="complete">أكمل</button>
+		<div class="forma">
+			<form id="options">
+				<input id="space" type="radio" name="option" value="spaceComplete">أكمل الفراغ <br>
+				<input id="ektb" type="radio" name="option" value="ktabh" checked>اكتب
+			</form>
+		</div>
 	</div>
-
 </body>
 <script src="../static/jquery-3.3.1.min.js"></script>
 <script>
@@ -57,12 +64,9 @@
 				success: function (result) {
 					$("#oktob").val(result.slice(1,-1))
 				}
-
 			})
 		}
 	})
-
 </script>
 
 </html>
-
