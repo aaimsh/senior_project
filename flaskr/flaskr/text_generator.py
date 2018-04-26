@@ -13,6 +13,7 @@ from keras.layers import GRU
 from keras.layers import Dropout
 from keras.models import load_model
 import flaskr.harakat
+import heapq
 
 import random
 
@@ -174,7 +175,7 @@ class DocumentProcessor:
             corpus.append(w)
         return corpus
 
-    def get_training_data(self, t_data=None, time_step=5, mode=1):
+    def get_training_data(self, t_data=None, time_step=5, mode=1, reverse=False):
         '''
         this metod is for get the training data the input and the target for RNN use
         if data=None the data will be opject corpus,
@@ -202,7 +203,9 @@ class DocumentProcessor:
             else:
                 x = t_data[:-1]
                 y = self.get_corpus_as_index(t_data[1:])
-        
+        if reverse:
+            x.reverse()
+            y.reverse()
         x_train = []
         y_train = []
         for i in range(len(x)-time_step):
@@ -240,7 +243,7 @@ class DocumentProcessor:
         the path must end with "/"
         '''
 
-        saving = (self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num)
+        saving = (self.corpus, self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num)
         file = open(path+name,'wb')
         pickle.dump(saving, file)
         file.close()
@@ -256,7 +259,7 @@ class DocumentProcessor:
         '''
 
         file = open(path+name,'rb')
-        self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num = pickle.load(file)
+        self.corpus, self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num = pickle.load(file)
         file.close()
 
 class WordGenerator:
@@ -401,7 +404,42 @@ class Writer:
                 sentences.append(self.document.int_to_word[r])
         text = self.get_text(sentences)
         return text
+    
+    def predict_word(self, words=None):
+        '''
+        a method which which predict a word for 
+        giving a sequence of words.
 
+        parameter:
+        words:- the initial sequences of words
+        '''
+        
+        sentences = words
+        result = None
+        word = []
+        if self.multi_generator:
+            i = len(sentences)
+            input_word = []
+            if i == 0:
+                input_word = self.document.convert_words(sentences['START'], time_step=1)
+                result = self.generator[0].generate(input_word)
+            elif i < self.time_step:
+                input_word = self.document.convert_words(sentences[:i], time_step=i)
+                result = self.generator[i-1].generate(input_word)
+            else:
+                input_word = self.document.convert_words(sentences[i-self.time_step: i], time_step=self.time_step)
+                result = self.generator[-1].generate(input_word)
+        else:
+            input_word = []
+            if len(sentences) < self.time_step:
+                input_word = self.padding(sentences)
+            else:
+                input_word = self.document.convert_words(sentences[:self.time_step])
+            result = self.generator.generate(input_word)
+        indexes = heapq.nlargest(5, range(len(result[0][-1])), result[0][-1].take)
+        for x in indexes:
+            word.append((self.document.int_to_word[x], float('{0}'.format(result[0][-1][x]))))
+        return word
     def get_text(self, word):
         '''
         this method take a list of string and return a string
@@ -439,14 +477,14 @@ class Writer:
             vector.append(w)
         return self.document.convert_words(vector)
 
-    def save(self, path=''):
+    def save(self, path='', name=''):
         '''
         this method is for saving opject writer
         '''
 
         #saving information 
         saving = (self.time_step, self.multi_generator)
-        file = open(path+'writer_info','wb')
+        file = open(path+name+'_writer_info','wb')
         pickle.dump(saving, file)
         file.close()
         #saving the document
@@ -454,17 +492,17 @@ class Writer:
         #saving the generator
         if self.multi_generator:
             for i in range(self.time_step):
-                self.generator[i].save(path,'writer_gen{0}'.format(i+1))
+                self.generator[i].save(path, name+'_writer_gen{0}'.format(i+1))
         else:
-            self.generator.save(path, 'writer_gen')
+            self.generator.save(path, name+'_writer_gen')
     
-    def load(self, path=''):
+    def load(self, path='', name=''):
         '''
         this method is for load opject writer
         '''
 
         #load information 
-        file = open(path+'writer_info','rb')
+        file = open(path+name+'_writer_info','rb')
         self.time_step, self.multi_generator = pickle.load(file)
         file.close()
         #load the document
@@ -475,10 +513,55 @@ class Writer:
             self.generator = []
             for i in range(self.time_step):
                 self.generator.append(WordGenerator())
-                self.generator[i].load(path,'writer_gen{0}'.format(i+1))
+                self.generator[i].load(path, name+'_writer_gen{0}'.format(i+1))
         else:
             self.generator = WordGenerator()
-            self.generator.load(path, 'writer_gen')
+            self.generator.load(path, name+'_writer_gen')
+
+def get_prediction(forward_gen, backward_gen, sentence):
+    '''
+    this method is to predict a ward in the middel of sentence
+
+    parameters:-
+    forward_gen is a forward generator of class writer
+    backward_gen is a backward generator of class writer
+    '''
+    s = sentence
+    index = s.index('__')
+    f_set = []
+    b_set = []
+    result = ''
+    for i in s:
+        if i == 'END':
+            result += '. '
+        elif i != 'START':
+            result += i + ' '
+    result += '\n'
+    if index == len(s)-1:
+        forward = s[:index]
+        f_set = forward_gen.predict_word(forward)
+    else:
+        forward = s[:index]
+        backward = s[index+1:]
+        backward.reverse
+        f_set = forward_gen.predict_word(forward)
+        b_set = backward_gen.predict_word(backward)
+    num = 0
+    for i in f_set:
+        for j in b_set:
+            if i[1] >= j[1]:
+                result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, i[0], 100*i[1])
+                num += 1
+                break
+            else:
+                result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, j[0], 100*j[1])
+                num += 1
+            if num == 5:
+                break
+        if num == 5:
+                break
+    return result
+
 
 def one_hot_vec(index, size):
     '''
