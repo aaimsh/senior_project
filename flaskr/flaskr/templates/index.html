@@ -33,15 +33,15 @@
 		<textarea id="oktob" rows="15" cols="100"></textarea>
 	</div>
 	<div class="buttons">
-		<textarea id="noOfWords"rows="1" cols="5"></textarea>
+		<textarea id="noOfWordsField"rows="1" cols="5"></textarea>
 		<label id="numOfWords">عدد الكلمات</label>
 		<button id="clear">امسح</button>
 		<button id="write">اكتب</button>
-		<button id="complete">أكمل</button>
+		<button id="complete" style="display: none;">أكمل</button>
 		<div class="forma">
-			<form id="options">
-				<input id="space" type="radio" name="option" value="spaceComplete">أكمل الفراغ <br>
-				<input id="ektb" type="radio" name="option" value="ktabh" checked>اكتب
+			<form id="mode">
+				<input id="space" type="radio" name="option" value="c">أكمل الفراغ</input> <br>
+				<input id="ektb" type="radio" name="option" value="w" checked>اكتب</input>
 			</form>
 		</div>
 	</div>
@@ -52,13 +52,37 @@
 		$("#write").on('click', function () {
 			var words = $("#oktob").val()
 			var num = $("#noOfWords").val()
+			var mode =  "w";
 			console.log(words + num)
-			callOktop(words, num);
+			callOktop(words, num, mode);
 		});
-		function callOktop(words, num) {
+		$("#complete").on('click', function () {
+			var words = $("#oktob").val()
+			var num = $("#noOfWords").val()
+			var mode =  "c"; 
+			console.log(words + num)
+			callOktop(words, num, mode);
+		});
+		$("#space").on('click',function(){
+			
+			$("#write").hide()
+			$("#numOfWords").hide()
+			$("#noOfWordsField").hide()
+			$("#complete").show()
+		});
+		$("#ektb").on('click',function(){
+			$("#write").show()
+			$("#numOfWords").show()
+			$("#noOfWordsField").show()
+			$("#complete").hide()
+		});
+		$("#clear").on('click', function(){
+			$("#oktob").val("")
+		});
+		function callOktop(words, num, mode) {
 			$.ajax({
 				type: "POST",
-				data:{'words':words, 'num':num} ,
+				data:{'words':words, 'num':5, 'mode':mode} ,
 				url: "/oktop/",
 				dataType: "html",
 				success: function (result) {
