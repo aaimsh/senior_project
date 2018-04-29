@@ -43,7 +43,10 @@ def oktop():
             elif request.form['mode'] == 'c':
                 result = get_prediction(forward_writer, backward_writer, init.split())                
     elif request.form['mode'] == 'w':
-        result = forward_writer.write(0, number_of_word=400)
+        n_word = 300
+        if int(request.form['num']) > 0 :
+            n_word = int(request.form['num'])
+        result = forward_writer.write(0)
     else:
         result = 'لا يوجد اي نص'
     return render_template('result.html', result=result)
