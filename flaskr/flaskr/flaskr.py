@@ -34,16 +34,22 @@ def about():
 
 @app.route('/oktop/', methods=['POST', ])
 def oktop():
-    if request.form['words'] != '':
-        init = request.form['words']
+    num = 400
+    if request.form['mode'] == 'w':
+        if request.form['words'] != '':
+            init = request.form['words']
         if int(request.form['num']) > 0 :
             num = int(request.form['num'])
-            if request.form['mode'] == 'w':
-                result = forward_writer.write(1, words=init.split(), number_of_word=num)
-            elif request.form['mode'] == 'c':
-                result = get_prediction(forward_writer, backward_writer, init.split())                
+        if request.form['words'] == '':
+            result = forward_writer.write(0, number_of_word=num)
+        else:
+            result = forward_writer.write(1, words=init.split(), number_of_word=num)
+
+    elif request.form['mode'] == 'c':
+        result = get_prediction(forward_writer, backward_writer, init.split())                
     else:
         result = forward_writer.write(0, number_of_word=400)
     return render_template('result.html', result=result)
+
 if __name__ == '__main__':
     app.run()

@@ -50,21 +50,26 @@
 <script>
 	$(document).ready(function () {
 		$("#write").on('click', function () {
+			var num = 0
 			var words = $("#oktob").val()
-			var num = $("#noOfWords").val()
+			if( $("#noOfWordsField").val()>0){
+				var num = $("#noOfWordsField").val()
+			}
 			var mode =  "w";
 			console.log(words + num)
 			callOktop(words, num, mode);
 		});
 		$("#complete").on('click', function () {
+			var num = 0
 			var words = $("#oktob").val()
-			var num = $("#noOfWords").val()
+			if( $("#noOfWordsField").val()>0){
+				var num = $("#noOfWordsField").val()
+			}
 			var mode =  "c"; 
 			console.log(words + num)
 			callOktop(words, num, mode);
 		});
 		$("#space").on('click',function(){
-			
 			$("#write").hide()
 			$("#numOfWords").hide()
 			$("#noOfWordsField").hide()
@@ -82,7 +87,7 @@
 		function callOktop(words, num, mode) {
 			$.ajax({
 				type: "POST",
-				data:{'words':words, 'num':5, 'mode':mode} ,
+				data:{'words':words, 'num':num, 'mode':mode} ,
 				url: "/oktop/",
 				dataType: "html",
 				success: function (result) {
