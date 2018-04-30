@@ -305,12 +305,36 @@ class WordGenerator:
         '''
         self.generator.fit(x_train, y_train, epochs=epochs_n, batch_size=batch_n)
     
+    def train_for_fit(self, data, batch, document_p, time, e_batch, epochs):
+        self.generator.fit_generator(self.generator_for_fit(data, batch, document_p, time),
+        steps_per_epoch=e_batch, epochs=epochs, use_multiprocessing=True)
+                                    	
     def generate(self, data):
         '''
         this method is to generate a word for a giving data
         '''
         return self.generator.predict(data)
 
+    def generator_for_fit(self, data, batch, document_p, time):
+        index = 0
+        flag = False
+        while True:
+            if flag:
+                index = 0
+                sample = data[index:index+batch]
+                index += batch
+                flag = False
+                #print("Hello2")
+            else:
+                sample = data[index:index+batch]
+                index += batch
+            if len(sample)<(time+2):
+                #print("Hello")
+                sample = data[-(batch):]
+                flag = True
+            x,y = document_p.get_training_data(t_data=sample, time_step = time, reverse=False)
+            #print(x.shape,y.shape)
+            yield x,y
     def save(self, path='', name=''):
         '''
         this method is for saving the model under the name gene generator.h5
@@ -550,19 +574,27 @@ def get_prediction(forward_gen, backward_gen, sentence):
         f_set = forward_gen.predict_word(forward)
         b_set = backward_gen.predict_word(backward)
     num = 0
+    result_set = []
+    n_sum = 0
     for i in f_set:
         for j in b_set:
             if i[1] >= j[1]:
-                result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, i[0], 100*i[1])
+                #result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, i[0], 100*i[1])
+                result_set.append((i[0],i[1]))
+                n_sum += i[1]
                 num += 1
                 break
             else:
-                result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, j[0], 100*j[1])
+                #result += '{0}- {1} بنسبة {2:.2f} \n'.format(num+1, j[0], 100*j[1])
+                result_set.append((j[0],j[1]))
+                n_sum += j[1]
                 num += 1
             if num == 5:
                 break
         if num == 5:
                 break
+    for x in result_set:
+        result += '\t[%{1:.2f}]\t\t[{0}]\n'.format(x[0], 100*(x[1]/n_sum))
     return result
 
 
