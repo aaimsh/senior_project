@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding=utf-8 -*-
 
-import nltk
-import gensim
 import logging
 import numpy as np
 import pickle
@@ -12,7 +10,6 @@ from keras.layers import LSTM
 from keras.layers import GRU
 from keras.layers import Dropout
 from keras.models import load_model
-import flaskr.harakat
 import heapq
 
 import random
@@ -46,6 +43,9 @@ class DocumentProcessor:
         self.vec_num = 0
 
     def process_document(self, vec_num=32, mode=1, count_num=10, token=False):
+        import nltk
+        import gensim
+        import flaskr.harakat
         '''
         this is the main method, it will train the data to initalize int_to_word, word_to_vec
         and to initialize the ANN model and train it.
@@ -243,7 +243,7 @@ class DocumentProcessor:
         the path must end with "/"
         '''
 
-        saving = (self.corpus, self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num)
+        saving = (self.corpus, self.int_to_word, self.word_to_vec, self.word_to_int, self.size)
         file = open(path+name,'wb')
         pickle.dump(saving, file)
         file.close()
@@ -259,7 +259,7 @@ class DocumentProcessor:
         '''
 
         file = open(path+name,'rb')
-        self.corpus, self.document_path, self.encode, self.int_to_word, self.word_to_vec, self.word_to_int, self.size, self.vec_num = pickle.load(file)
+        self.corpus, self.int_to_word, self.word_to_vec, self.word_to_int, self.size = pickle.load(file)
         file.close()
 
 class WordGenerator:

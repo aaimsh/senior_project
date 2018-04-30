@@ -35,11 +35,13 @@ def about():
 @app.route('/oktop/', methods=['POST', ])
 def oktop():
     num = 400
-    if request.form['mode'] == 'w':
-        if request.form['words'] != '':
+    if request.form['words'] != '':
             init = request.form['words']
-        if int(request.form['num']) > 0 :
-            num = int(request.form['num'])
+
+    if int(request.form['num']) > 0 :
+        num = int(request.form['num'])
+
+    if request.form['mode'] == 'w':
         if request.form['words'] == '':
             result = forward_writer.write(0, number_of_word=num)
         else:
@@ -48,7 +50,7 @@ def oktop():
     elif request.form['mode'] == 'c':
         result = get_prediction(forward_writer, backward_writer, init.split())                
     else:
-        result = forward_writer.write(0, number_of_word=400)
+        result = 'لا يوجد اي نص'
     return render_template('result.html', result=result)
 
 if __name__ == '__main__':
